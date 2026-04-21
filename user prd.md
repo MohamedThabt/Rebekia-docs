@@ -185,7 +185,9 @@ flowchart TB
         PU["Pusher\nRealtime"]
     end
 
-    UA & AA & AD --> Gateway
+    UA --> Gateway
+    AA --> Gateway
+    AD --> Gateway
     REST --> Services
     WS --> PU
     Services --> DB
@@ -285,7 +287,7 @@ erDiagram
         timestamp phone_verified_at
         string password_hash
         string avatar_url
-        enum status "active | suspended | banned"
+        enum status "active, suspended, banned"
         text ban_reason
         timestamp ban_until
         tinyint rejection_count
@@ -302,13 +304,13 @@ erDiagram
         string national_id_image_url
         string face_image_url
         string digital_id_code UK
-        enum status "pending | active | suspended | offline"
+        enum status "pending, active, suspended, offline"
         bigint zone_id FK
         decimal current_lat
         decimal current_lng
         timestamp last_location_at
         boolean is_online
-        enum vehicle_type "motorcycle | tricycle | pickup | walking"
+        enum vehicle_type "motorcycle, tricycle, pickup, walking"
         string vehicle_plate
         decimal rating
         decimal total_kg_collected
@@ -347,7 +349,7 @@ erDiagram
         bigint user_id FK
         bigint ambassador_id FK
         bigint address_id FK
-        enum status "pending | assigned | en_route | arrived | weighing | verification | completed | cancelled_user | cancelled_ambassador | cancelled_admin | disputed"
+        enum status "pending, assigned, en_route, arrived, weighing, verification, completed, cancelled_user, cancelled_ambassador, cancelled_admin, disputed"
         timestamp scheduled_at
         timestamp accepted_at
         timestamp en_route_at
@@ -370,9 +372,9 @@ erDiagram
         bigint order_id FK
         bigint subcategory_id FK
         decimal estimated_quantity
-        enum estimated_unit "kg | piece | liter | box"
+        enum estimated_unit "kg, piece, liter, box"
         decimal actual_quantity
-        enum condition "good | average | poor"
+        enum condition "good, average, poor"
         decimal points_per_unit
         decimal points_awarded
         text rejection_reason
@@ -394,7 +396,7 @@ erDiagram
         bigint category_id FK
         string name_ar
         string name_en
-        enum unit "kg | piece | liter | box"
+        enum unit "kg, piece, liter, box"
         decimal points_per_unit
         json condition_modifier
         string icon_url
@@ -404,11 +406,11 @@ erDiagram
     disputes {
         bigint id PK
         bigint order_id FK
-        enum raised_by "user | ambassador | admin"
-        enum type "weight_dispute | quality_rejection | no_show | wrong_item | other"
+        enum raised_by "user, ambassador, admin"
+        enum type "weight_dispute, quality_rejection, no_show, wrong_item, other"
         text description
         json evidence_urls
-        enum status "open | under_review | resolved_user | resolved_ambassador | escalated"
+        enum status "open, under_review, resolved_user, resolved_ambassador, escalated"
         bigint resolved_by
         text resolution_notes
         timestamp resolved_at
@@ -467,7 +469,7 @@ erDiagram
         bigint id PK
         bigint wallet_id FK
         bigint order_id FK
-        enum type "earned_collection | earned_streak | earned_referral | earned_apology | redeemed_product | redeemed_cash | redeemed_coupon | expired | admin_adjustment"
+        enum type "earned_collection, earned_streak, earned_referral, earned_apology, redeemed_product, redeemed_cash, redeemed_coupon, expired, admin_adjustment"
         decimal amount
         decimal balance_after
         text description
@@ -496,7 +498,7 @@ erDiagram
         bigint id PK
         bigint user_id FK
         date activity_date
-        enum type "login | collection"
+        enum type "login, collection"
         int bonus_points_awarded
         timestamp created_at
     }
@@ -531,7 +533,7 @@ erDiagram
         string name_ar
         text description_ar
         string image_url
-        enum type "eco_product | exchange_item"
+        enum type "eco_product, exchange_item"
         decimal points_cost
         decimal cash_cost
         int stock_quantity
@@ -564,10 +566,10 @@ erDiagram
         bigint order_id FK
         bigint product_id FK
         bigint partner_discount_id FK
-        enum type "product | cash | coupon"
+        enum type "product, cash, coupon"
         decimal points_spent
         decimal cash_amount
-        enum status "pending | fulfilled | failed | refunded"
+        enum status "pending, fulfilled, failed, refunded"
         timestamp fulfilled_at
         text notes
         timestamp created_at
@@ -587,7 +589,7 @@ erDiagram
         bigint ambassador_id FK
         bigint order_id FK
         decimal amount_egp
-        enum status "pending | paid"
+        enum status "pending, paid"
         timestamp paid_at
         timestamp created_at
     }
@@ -909,17 +911,17 @@ stateDiagram-v2
     direction LR
     [*] --> pending : Order placed by user
 
-    pending --> assigned : Ambassador accepts\n"قبول الطلب"
+    pending --> assigned : Ambassador accepts (قبول الطلب)
     pending --> cancelled_admin : Admin cancels
 
-    assigned --> en_route : Ambassador departs\n"خرجت من عندي"
+    assigned --> en_route : Ambassador departs (خرجت من عندي)
     assigned --> cancelled_ambassador : Ambassador cancels
 
-    en_route --> arrived : Ambassador at location\n"وصلت"
+    en_route --> arrived : Ambassador at location (وصلت)
 
-    arrived --> weighing : Begin weighing\n"بدأت الوزن"
+    arrived --> weighing : Begin weighing (بدأت الوزن)
 
-    weighing --> verification : Weights submitted\n+ scale photo uploaded
+    weighing --> verification : Weights submitted + scale photo uploaded
 
     verification --> completed : User enters OTP ✅
     verification --> disputed : User disputes weight
